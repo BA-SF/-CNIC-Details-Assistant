@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f7f4">
+  <title>CNIC Details Assistant</title>
+  <style>
+    :root {
+      color-scheme: light;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: #182b25;
+      background: #f5f7f4;
+      font-synthesis: none;
+      text-rendering: optimizeLegibility;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      min-width: 320px;
+      min-height: 100vh;
+      margin: 0;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      background:
+        radial-gradient(ellipse at 12% 8%, #e1eee6 0, transparent 34%),
+        #f5f7f4;
+    }
+
+    button, input { font: inherit; }
+
+    .app {
+      width: min(100%, 760px);
+      overflow: hidden;
+      border: 1px solid #e1e8e2;
+      border-radius: 20px;
+      background: #fff;
+      box-shadow: 0 24px 70px #173a2b12;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 22px 26px;
+      border-bottom: 1px solid #edf0ed;
+    }
+
+    .brand { display: flex; align-items: center; gap: 12px; }
+
+    .brand-mark {
+      display: grid;
+      width: 42px;
+      height: 42px;
+      place-items: center;
+      border-radius: 13px;
+      color: #fff;
+      background: #176b4b;
+      font-size: 20px;
+    }
+
+    h1 { margin: 0; font-size: 16px; letter-spacing: -.02em; }
+    .subtitle { margin: 4px 0 0; color: #75827b; font-size: 12px; }
+
+    .privacy-tag {
+      padding: 7px 10px;
+      border: 1px solid #dcebe1;
+      border-radius: 999px;
+      color: #176b4b;
+      background: #f4faf6;
+      font-size: 11px;
+      font-weight: 650;
+      white-space: nowrap;
+    }
+
+    .chat {
+      display: flex;
+      min-height: 440px;
+      max-height: min(62vh, 590px);
+      flex-direction: column;
+      gap: 18px;
+      overflow-y: auto;
+      padding: 26px;
+      background: #fcfdfc;
+    }
+
+    .message {
+      max-width: min(88%, 520px);
+      padding: 13px 15px;
+      border-radius: 15px;
+      font-size: 14px;
+      line-height: 1.55;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+
+    .bot {
+      align-self: flex-start;
+      border: 1px solid #e8ede8;
+      border-bottom-left-radius: 5px;
+      background: #fff;
+    }
+
+    .user {
+      align-self: flex-end;
+      border-bottom-right-radius: 5px;
+      color: #fff;
+      background: #176b4b;
+    }
+
+    .notice {
+      margin-top: 2px;
+      padding: 12px 14px;
+      border: 1px solid #f0dfb8;
+      border-radius: 12px;
+      color: #675326;
+      background: #fffaf0;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .composer {
+      display: flex;
+      gap: 10px;
+      padding: 16px 20px;
+      border-top: 1px solid #edf0ed;
+      background: #fff;
+    }
+
+    input {
+      width: 100%;
+      min-width: 0;
+      padding: 13px 14px;
+      border: 1px solid #dce4dd;
+      border-radius: 11px;
+      outline: none;
+      color: #182b25;
+      background: #fff;
+      font-size: 14px;
+    }
+
+    input:focus { border-color: #45916d; box-shadow: 0 0 0 3px #176b4b18; }
+    input:disabled { background: #f6f8f6; }
+
+    button {
+      flex: 0 0 auto;
+      padding: 0 18px;
+      border: 0;
+      border-radius: 11px;
+      color: #fff;
+      background: #176b4b;
+      font-weight: 650;
+      cursor: pointer;
+    }
+
+    button:hover:not(:disabled) { background: #12583e; }
+    button:disabled { cursor: not-allowed; opacity: .55; }
+
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 0 22px 17px;
+      color: #87918b;
+      font-size: 11px;
+    }
+
+    .clear-button {
+      padding: 0;
+      border-radius: 0;
+      color: #65756b;
+      background: transparent;
+      font-size: 11px;
+      font-weight: 600;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .clear-button:hover:not(:disabled) { color: #176b4b; background: transparent; }
+
+    @media (max-width: 520px) {
+      body { padding: 10px; }
+      .app { border-radius: 15px; }
+      header { padding: 17px; }
+      .chat { min-height: 420px; padding: 18px 14px; }
+      .composer { padding: 13px; }
+      .footer { padding: 0 15px 15px; }
+      .privacy-tag { font-size: 10px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header>
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">✦</div>
+        <div>
+          <h1>CNIC Details Assistant</h1>
+          <p class="subtitle">A simple guided details checklist</p>
+        </div>
+      </div>
+      <span class="privacy-tag">Private demo</span>
+    </header>
+
+    <section class="chat" id="chat" aria-label="Chat conversation" aria-live="polite"></section>
+
+    <form class="composer" id="form">
+      <input id="reply" type="text" placeholder="Type your reply…" autocomplete="off" aria-label="Your reply">
+      <button id="send" type="submit">Send</button>
+    </form>
+
+    <div class="footer">
+      <span>For demonstration only. Do not enter real identity details.</span>
+      <button class="clear-button" id="clear" type="button">Clear chat</button>
+    </div>
+  </main>
+
+  <script>
+    const chat = document.querySelector("#chat");
+    const form = document.querySelector("#form");
+    const input = document.querySelector("#reply");
+    const sendButton = document.querySelector("#send");
+    const clearButton = document.querySelector("#clear");
+
+    const questions = [
+      { key: "name", prompt: "What is the full name printed on the CNIC? (For this demo, use a made-up name.)" },
+      { key: "cnic", prompt: "Enter the 13-digit CNIC number using digits only. Please use a fictional number, not a real CNIC." },
+      { key: "birthDate", prompt: "What is the date of birth printed on the card? Enter a real date as DD-MM-YYYY (four-digit year), or type “skip”." },
+      { key: "issueDate", prompt: "What is the card's date of issue? Enter a real date as DD-MM-YYYY (four-digit year), or type “skip”." },
+      { key: "expiryDate", prompt: "What is the card's expiry date? Enter a real date as DD-MM-YYYY (four-digit year), or type “skip”." }
+    ];
+
+    let answers = {};
+    let step = -1;
+
+    function parseDate(value) {
+      const match = /^(\d{2})-(\d{2})-(\d{4})$/.exec(value);
+      if (!match) return null;
+
+      const day = Number(match[1]);
+      const month = Number(match[2]);
+      const year = Number(match[3]);
+      if (year < 1900) return null;
+
+      const timestamp = Date.UTC(year, month - 1, day);
+      const date = new Date(timestamp);
+      if (date.getUTCFullYear() !== year || date.getUTCMonth() !== month - 1 || date.getUTCDate() !== day) return null;
+      return timestamp;
+    }
+
+    function todayTimestamp() {
+      const today = new Date();
+      return Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
+    }
+
+    function addMessage(text, sender) {
+      const message = document.createElement("div");
+      message.className = `message ${sender}`;
+      message.textContent = text;
+      chat.append(message);
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    function askCurrentQuestion() {
+      if (step < 0) {
+        addMessage("Hello! I can walk you through a few details commonly printed on a CNIC.", "bot");
+        addMessage("Privacy first: this demo runs only in your browser. It does not send or save replies, but avoid entering real personal information. Type START to continue, or anything else to stop.", "bot");
+        return;
+      }
+
+      if (step < questions.length) {
+        addMessage(questions[step].prompt, "bot");
+        input.type = questions[step].key === "cnic" ? "password" : "text";
+        input.autocomplete = "off";
+        input.placeholder = questions[step].key === "cnic" ? "Fictional 13-digit number" : "Type your reply…";
+        return;
+      }
+
+      const cnic = answers.cnic;
+      addMessage(
+        `Thanks. Your demo checklist is complete.\nName: ${answers.name}\nCNIC: ${cnic ? `•••••••••${cnic.slice(-4)}` : "not provided"}\nDate of birth: ${answers.birthDate || "not provided"}\nDate of issue: ${answers.issueDate || "not provided"}\nExpiry date: ${answers.expiryDate || "not provided"}\n\nThis summary exists only in this page until you clear the chat or close it.`,
+        "bot"
+      );
+      input.disabled = true;
+      sendButton.disabled = true;
+    }
+
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const value = input.value.trim();
+      if (!value) return;
+
+      if (step === -1) {
+        if (value.toLowerCase() !== "start") {
+          addMessage("No details were requested. Type START if you want to try the fictional-data demo.", "bot");
+          input.value = "";
+          return;
+        }
+        addMessage("START", "user");
+        step = 0;
+        input.value = "";
+        askCurrentQuestion();
+        return;
+      }
+
+      const question = questions[step];
+      if (question.key === "cnic" && value.toLowerCase() !== "skip" && !/^\d{13}$/.test(value)) {
+        addMessage("Please enter exactly 13 digits, or type “skip”.", "bot");
+        input.value = "";
+        return;
+      }
+
+      const dateKeys = ["birthDate", "issueDate", "expiryDate"];
+      if (dateKeys.includes(question.key) && value.toLowerCase() !== "skip") {
+        const date = parseDate(value);
+        if (date === null) {
+          addMessage("Enter a real date in DD-MM-YYYY format with a four-digit year, or type “skip”.", "bot");
+          input.value = "";
+          return;
+        }
+
+        const today = todayTimestamp();
+        if (question.key === "birthDate" && date > today) {
+          addMessage("Date of birth cannot be in the future. Enter DD-MM-YYYY, or type “skip”.", "bot");
+          input.value = "";
+          return;
+        }
+        if (question.key === "issueDate") {
+          if (date > today) {
+            addMessage("Date of issue cannot be in the future. Enter DD-MM-YYYY, or type “skip”.", "bot");
+            input.value = "";
+            return;
+          }
+          const birthDate = answers.birthDate ? parseDate(answers.birthDate) : null;
+          if (birthDate !== null && date < birthDate) {
+            addMessage("Date of issue cannot be before the date of birth. Enter DD-MM-YYYY, or type “skip”.", "bot");
+            input.value = "";
+            return;
+          }
+        }
+        if (question.key === "expiryDate") {
+          if (date < today) {
+            addMessage("This expiry date is in the past, so the CNIC appears expired. Enter a date today or later, or type “skip”.", "bot");
+            input.value = "";
+            return;
+          }
+          const issueDate = answers.issueDate ? parseDate(answers.issueDate) : null;
+          if (issueDate !== null && date <= issueDate) {
+            addMessage("Expiry date must be after the date of issue. Enter DD-MM-YYYY, or type “skip”.", "bot");
+            input.value = "";
+            return;
+          }
+        }
+      }
+
+      answers[question.key] = value.toLowerCase() === "skip" ? "" : value;
+      addMessage(question.key === "cnic" && value.toLowerCase() !== "skip" ? "•••••••••" + value.slice(-4) : value, "user");
+      input.value = "";
+      step += 1;
+      askCurrentQuestion();
+    });
+
+    clearButton.addEventListener("click", () => {
+      answers = {};
+      step = -1;
+      chat.replaceChildren();
+      input.disabled = false;
+      input.type = "text";
+      input.placeholder = "Type your reply…";
+      sendButton.disabled = false;
+      addMessage("Chat cleared. No answers are retained by this demo.", "bot");
+      askCurrentQuestion();
+      input.focus();
+    });
+
+    askCurrentQuestion();
+  </script>
+</body>
+</html>
